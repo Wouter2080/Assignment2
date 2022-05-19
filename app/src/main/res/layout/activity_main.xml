@@ -36,7 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="Press 'SCAN WIFI'" />
+                    android:text="Press: SCAN WIFI" />
             </LinearLayout>
         </ScrollView>
 
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
             android:background="@drawable/button"
-            android:layout_marginRight="10dp"
+            android:layout_margin="10dp"
             android:text="Train" />
 
         <Button
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
             android:background="@drawable/button"
-            android:layout_marginRight="10dp"
+            android:layout_margin="10dp"
             android:text="Scan Wifi" />
 
         <Button
@@ -73,6 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.33"
             android:background="@drawable/button"
+            android:layout_margin="10dp"
             android:text="Save" />
     </LinearLayout>
 
@@ -115,7 +116,7 @@
                     android:id="@+id/textTRAIN"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Press 'Train'"
+                    android:text="Press: TRAIN"
                     android:textAlignment="center" />
             </LinearLayout>
         </ScrollView>
