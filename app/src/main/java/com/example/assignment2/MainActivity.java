@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         // Integers
-        limit = 100;
+        limit = 0;
 
         // Booleans
         start = false;
@@ -67,13 +67,9 @@ public class MainActivity extends Activity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
-                // Set text.
                 textRssi.setText("\n\tScan all access points:");
-                // Start a wifi scan.
                 wifiManager.startScan();
-                // Store results in a list.
                 List<ScanResult> scanResults = wifiManager.getScanResults();
-                // Write results to a label
                 for (ScanResult scanResult : scanResults) {
                     textRssi.setText(textRssi.getText() + "\n\tBSSID = "
                             + scanResult.BSSID + "    RSSI = "
@@ -89,10 +85,24 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 textTrain.setText("");
                 count = 0;
+                limit = 0;
                 start = true;
-                scan();
             }
         });
+
+
+       Thread thread = new Thread() {
+            @Override
+            public void run() {
+                System.out.println("Dit is in thread");
+                if (start) {
+                    while (limit < 10) {
+                        scan();
+                        pause(2000);
+                    }
+                }
+            }
+        }; thread.start();
     }
 
     // onResume() registers the accelerometer for listening the events
@@ -114,30 +124,23 @@ public class MainActivity extends Activity {
     }
 
     public void scan() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                while (start) {
-                    wifiManager.startScan();
-                    List<ScanResult> scanResults = wifiManager.getScanResults();
+        wifiManager.startScan();
+        List<ScanResult> scanResults = wifiManager.getScanResults();
 
-                    for (ScanResult scanResult : scanResults) {
-                        if (count == 0) {
-                            textTrain.setText(scanResult.BSSID + "," + scanResult.level + "," + scanResult.SSID);
-                            count++;
-                            continue;
-                        }
-                        textTrain.setText(textTrain.getText() + "," + scanResult.BSSID + "," + scanResult.level + "," + scanResult.SSID);
-                        scrollTrain.fullScroll(View.FOCUS_DOWN);
-                    }
-                    if (limit == 100) {start = false;}
-                    limit++;
-                    textTrain.append("\n");
-                    textCount.setText("" + limit);
-                    pause(2000);
-                }
+        for (ScanResult scanResult : scanResults) {
+            if (count == 0) {
+                textTrain.setText(textTrain.getText() + scanResult.BSSID + "," + scanResult.level + "," + scanResult.SSID);
+                count++;
+                continue;
             }
-        });
+            textTrain.setText(textTrain.getText() + "," + scanResult.BSSID + "," + scanResult.level + "," + scanResult.SSID);
+            scrollTrain.fullScroll(View.FOCUS_DOWN);
+        }
+        limit++;
+        textTrain.append("\n");
+        textCount.setText("" + limit);
+        count = 0;
     }
+
 
 }
