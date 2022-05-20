@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
 
         // Booleans
         start = false;
-        suc = false;
+        suc = true;
 
         // Create text views
         textRssi = (TextView) findViewById(R.id.textRSSI);
@@ -66,7 +66,6 @@ public class MainActivity extends Activity {
 
         // Set wifi manager.
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifiManager.startScan();
 
         BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
             @Override
@@ -87,8 +86,6 @@ public class MainActivity extends Activity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         getApplicationContext().registerReceiver(wifiScanReceiver, intentFilter);
-
-
 
 
 
@@ -194,7 +191,7 @@ public class MainActivity extends Activity {
                     });
 
                     try {
-                        Thread.sleep(3010);
+                        Thread.sleep(3030);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
