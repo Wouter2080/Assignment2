@@ -9,12 +9,20 @@ import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.List;
 
 /**
@@ -33,6 +41,7 @@ public class MainActivity extends Activity {
 
     Integer limit, count, rounds;
     Boolean start,suc;
+    String data;
 
 
     @Override
@@ -42,7 +51,7 @@ public class MainActivity extends Activity {
 
         // Integers
         limit = 0;
-        rounds = 100;
+        rounds = 10;
 
         // Booleans
         start = false;
@@ -138,6 +147,15 @@ public class MainActivity extends Activity {
         });
 
 
+        buttonSave.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                data = String.valueOf(textTrain.getText());
+                writeToFile(data, "test.txt");
+            }
+        });
+
+
     }
 
     // onResume() registers the accelerometer for listening the events
@@ -200,5 +218,39 @@ public class MainActivity extends Activity {
         });
         th.start();
     }
+
+
+    private void writeToFile(String data, String filename){
+        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        root = new File(root, "RSSI-Data");
+        if (!root.exists()) {
+            root.mkdir();
+        }
+        root = new File(root , filename);
+        try {
+            FileOutputStream stream = new FileOutputStream(root);
+            stream.write(data.getBytes());
+            stream.close();
+            Toast.makeText(MainActivity.this, "Saved to File",Toast.LENGTH_LONG).show();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            boolean bool = false;
+            try {
+                // try to create the file
+                bool = root.createNewFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            if (bool){
+                // call the method again
+                writeToFile(data,filename);
+            }else {
+                throw new IllegalStateException("Failed to create image file");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
