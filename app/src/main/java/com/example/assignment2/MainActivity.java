@@ -1,8 +1,11 @@
 package com.example.assignment2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -10,10 +13,13 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +47,7 @@ public class MainActivity extends Activity {
 
     Integer limit, count, rounds;
     Boolean start,suc;
-    String data;
+    String data, dialogText;
 
 
     @Override
@@ -150,8 +156,7 @@ public class MainActivity extends Activity {
         buttonSave.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                data = String.valueOf(textTrain.getText());
-                writeToFile(data, "test.txt");
+                dialog();
             }
         });
 
@@ -223,34 +228,52 @@ public class MainActivity extends Activity {
     private void writeToFile(String data, String filename){
         File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         root = new File(root, "RSSI-Data");
-        if (!root.exists()) {
-            root.mkdir();
-        }
+        if (!root.exists()) {root.mkdir();}
         root = new File(root , filename);
         try {
             FileOutputStream stream = new FileOutputStream(root);
             stream.write(data.getBytes());
             stream.close();
-            Toast.makeText(MainActivity.this, "Saved to File",Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Saved as " + dialogText,Toast.LENGTH_LONG).show();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             boolean bool = false;
-            try {
-                // try to create the file
-                bool = root.createNewFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            if (bool){
-                // call the method again
-                writeToFile(data,filename);
-            }else {
-                throw new IllegalStateException("Failed to create image file");
-            }
+            try {bool = root.createNewFile();} catch (IOException ex) {ex.printStackTrace();}
+            if (bool){writeToFile(data,filename);} else {throw new IllegalStateException("Failed to create image file");}
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
+    private void dialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("File Name");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint("example.txt");
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialogText = input.getText().toString();
+                if (dialogText.equals("")) {dialogText = "example.txt";}
+                data = String.valueOf(textTrain.getText());
+                writeToFile(data, dialogText);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
 
 }
