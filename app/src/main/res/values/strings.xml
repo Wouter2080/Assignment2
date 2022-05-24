@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Assignment 2</string>
+    <string name="title">Localization RSSI utilizing Bayes Filters</string>
 </resources>

@@ -2,7 +2,6 @@ package com.example.assignment2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,8 +13,6 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -28,7 +25,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.List;
 
 /**
@@ -43,7 +39,7 @@ public class MainActivity extends Activity {
 
     TextView textRssi, textTrain, textCount, textScan;
     ScrollView scrollTrain, scrollRssi;
-    Button buttonRssi, buttonTrain, buttonSave, buttonStop;
+    Button buttonRssi, buttonTrain, buttonSave, buttonStop, buttonTest;
 
     Integer limit, count, rounds;
     Boolean start,suc;
@@ -57,7 +53,7 @@ public class MainActivity extends Activity {
 
         // Integers
         limit = 0;
-        rounds = 10;
+        rounds = 50;
 
         // Booleans
         start = false;
@@ -78,6 +74,7 @@ public class MainActivity extends Activity {
         buttonTrain = (Button) findViewById(R.id.buttonTRAIN);
         buttonSave = (Button) findViewById(R.id.buttonSAVE);
         buttonStop = (Button) findViewById(R.id.buttonSTOP);
+        buttonTest = (Button) findViewById(R.id.buttonTEST);
 
         // Set wifi manager.
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -87,7 +84,6 @@ public class MainActivity extends Activity {
             public void onReceive(Context c, Intent intent) {
                 boolean success = intent.getBooleanExtra(
                         WifiManager.EXTRA_RESULTS_UPDATED, false);
-
                 if (success) {
                     suc = true;
                     System.out.println("Scan successful");
@@ -146,6 +142,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 textTrain.setText("");
                 textCount.setText("0");
+                textScan.setText("...");
                 count = 0;
                 limit = 0;
                 start = false;
@@ -161,6 +158,15 @@ public class MainActivity extends Activity {
         });
 
 
+        buttonTest.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     // onResume() registers the accelerometer for listening the events
@@ -172,6 +178,7 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
     }
+
 
     public void scan() {
         wifiManager.startScan();
