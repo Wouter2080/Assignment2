@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
 
         // Integers
         limit = 0;
-        rounds = 50;
+        rounds = 100;
 
         // Booleans
         start = false;
@@ -186,10 +186,10 @@ public class MainActivity extends Activity {
 
         for (ScanResult scanResult : scanResults) {
             if (count == 0) {
-                textTrain.setText(textTrain.getText() + scanResult.BSSID + "," + scanResult.level + "," + scanResult.SSID);
+                textTrain.append(scanResult.BSSID + "," + scanResult.level + "," + scanResult.SSID);
                 count++;
             } else {
-                textTrain.setText(textTrain.getText() + "," + scanResult.BSSID + "," + scanResult.level + "," + scanResult.SSID);
+                textTrain.append("," + scanResult.BSSID + "," + scanResult.level + "," + scanResult.SSID);
                 scrollTrain.fullScroll(View.FOCUS_DOWN);
             }
         }
