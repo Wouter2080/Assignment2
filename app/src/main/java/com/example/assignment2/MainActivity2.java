@@ -31,6 +31,7 @@ public class MainActivity2 extends AppCompatActivity {
     TextView textCell1, textCell2, textCell3, textCell4, textCell5, textCell6, textCell7, textCell8, textCell9, textCell10, textCell11, textCell12, textCell13, textCell14, textCell15, textStatus;
     Button buttonStart, buttonStop2, buttonTrain2, buttonLocalize;
     Boolean suc;
+    Integer count;
     AssetManager assetManager;
     String[] files;
 
@@ -41,7 +42,7 @@ public class MainActivity2 extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
 
         // Integers
-
+        count = 0;
         // Booleans
 
         // Create text views
@@ -150,7 +151,7 @@ public class MainActivity2 extends AppCompatActivity {
                         while (max_freq <= threshold1 && t <= threshold2 ) {
                             wifiManager.startScan();
                             List<ScanResult> scanResult = wifiManager.getScanResults();
-                            int count = 0;
+                            count = 0;
                             for (int i = 0; i < scanResult.size(); i++) {
                                 int j = 0;
                                 for (String value : files) {
@@ -182,8 +183,8 @@ public class MainActivity2 extends AppCompatActivity {
                             t++;
                         }
                         if (t == (threshold2 + 1) && location != 15) {
-                            //textStatus.setText("no match");
-                            textStatus.setText(String.valueOf(max_freq));
+                            textStatus.setText("waiting...");
+                            //textStatus.setText(String.valueOf(max_freq));
                         }
                         else {
                             textStatus.setText("cell" + location);
@@ -199,7 +200,7 @@ public class MainActivity2 extends AppCompatActivity {
 
 
     public static Context mCtx;
-    public static String[] apload(int numTypes,Context context){
+    public static String[] apload(int numTypes, Context context) {
         mCtx = context;
         String[] apTable = new String[numTypes];
         try{
@@ -220,7 +221,7 @@ public class MainActivity2 extends AppCompatActivity {
 
     public static float[][] fileload(int cellNum, String fileName, Context context){
         mCtx = context;
-        int rssSize = 255;
+        int rssSize = 256;
         float[][] rssTable = new float[cellNum][rssSize];
         try{
             InputStreamReader fileReader = new InputStreamReader(mCtx.getAssets().open(fileName));
@@ -229,8 +230,7 @@ public class MainActivity2 extends AppCompatActivity {
             int cellIndex = 0;
             while((line = bufferedReader.readLine())!=null){
                 String[] lineSplit = line.split(",");
-                for(int i=0; i<rssSize; i++)
-                {
+                for(int i=0; i<rssSize; i++) {
                     rssTable[cellIndex][i] = Float.parseFloat(lineSplit[i]);
                 }
                 cellIndex++;
