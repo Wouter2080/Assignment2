@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ public class MainActivity2 extends AppCompatActivity {
     TextView textCell1, textCell2, textCell3, textCell4, textCell5, textCell6, textCell7, textCell8, textCell9, textCell10, textCell11, textCell12, textCell13, textCell14, textCell15, textStatus;
     Button buttonStart, buttonStop2, buttonTrain2, buttonLocalize;
     Boolean suc;
-    Integer count;
+    Integer count, location, t, threshold2, macAddresses, numCells;
     AssetManager assetManager;
     String[] files;
 
@@ -119,6 +120,7 @@ public class MainActivity2 extends AppCompatActivity {
         buttonLocalize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                initializeColors();
                 progressBar.setVisibility(View.VISIBLE);
                 localizeMe();
             }
@@ -137,7 +139,8 @@ public class MainActivity2 extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        int macAddresses = 343, numCells = 15;
+                        macAddresses = 343;
+                        numCells = 15;
                         String[] ap = apload(macAddresses, getApplicationContext());
                         float[] freq;
                         freq = new float[numCells];
@@ -145,9 +148,10 @@ public class MainActivity2 extends AppCompatActivity {
                             freq[l] = (float) 1 / numCells;
                         }
                         float max_freq = 0;
-                        int location = 0, t = 0;
+                        location = 0;
+                        t = 0;
                         double threshold1 = 0.95;
-                        int threshold2 = 5;
+                        threshold2 = 5;
                         while (max_freq <= threshold1 && t <= threshold2 ) {
                             wifiManager.startScan();
                             List<ScanResult> scanResult = wifiManager.getScanResults();
@@ -187,6 +191,7 @@ public class MainActivity2 extends AppCompatActivity {
                             //textStatus.setText(String.valueOf(max_freq));
                         }
                         else {
+                            changeColors();
                             textStatus.setText("cell" + location);
                             stopIteration();
                         }
@@ -258,5 +263,66 @@ public class MainActivity2 extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    public void changeColors() {
+        switch (location) {
+            case 1:
+                textCell1.setBackgroundResource(R.color.colorAccent);
+                textCell1.setTextColor(Color.parseColor("#FFFFFF"));
+            case 2:
+                textCell2.setBackgroundResource(R.color.colorAccent);
+                textCell2.setTextColor(Color.parseColor("#FFFFFF"));
+            case 3:
+                textCell3.setBackgroundResource(R.color.colorAccent);
+                textCell3.setTextColor(Color.parseColor("#FFFFFF"));
+            case 4:
+                textCell4.setBackgroundResource(R.color.colorAccent);
+                textCell4.setTextColor(Color.parseColor("#FFFFFF"));
+            case 5:
+                textCell5.setBackgroundResource(R.color.colorAccent);
+                textCell5.setTextColor(Color.parseColor("#FFFFFF"));
+            case 6:
+                textCell6.setBackgroundResource(R.color.colorAccent);
+                textCell6.setTextColor(Color.parseColor("#FFFFFF"));
+            case 7:
+                textCell7.setBackgroundResource(R.color.colorAccent);
+                textCell7.setTextColor(Color.parseColor("#FFFFFF"));
+            case 8:
+                textCell8.setBackgroundResource(R.color.colorAccent);
+                textCell8.setTextColor(Color.parseColor("#FFFFFF"));
+            case 9:
+                textCell9.setBackgroundResource(R.color.colorAccent);
+                textCell9.setTextColor(Color.parseColor("#FFFFFF"));
+            case 10:
+                textCell10.setBackgroundResource(R.color.colorAccent);
+                textCell10.setTextColor(Color.parseColor("#FFFFFF"));
+            case 11:
+                textCell11.setBackgroundResource(R.color.colorAccent);
+                textCell11.setTextColor(Color.parseColor("#FFFFFF"));
+            case 12:
+                textCell12.setBackgroundResource(R.color.colorAccent);
+                textCell12.setTextColor(Color.parseColor("#FFFFFF"));
+            case 13:
+                textCell13.setBackgroundResource(R.color.colorAccent);
+                textCell13.setTextColor(Color.parseColor("#FFFFFF"));
+            case 14:
+                textCell14.setBackgroundResource(R.color.colorAccent);
+                textCell14.setTextColor(Color.parseColor("#FFFFFF"));
+            case 15:
+                textCell15.setBackgroundResource(R.color.colorAccent);
+                textCell15.setTextColor(Color.parseColor("#FFFFFF"));
+        }
+    }
+
+
+    public void initializeColors() {
+        int[] textCells = {R.id.textCELL1, R.id.textCELL2, R.id.textCELL3, R.id.textCELL4, R.id.textCELL5, R.id.textCELL6, R.id.textCELL7, R.id.textCELL8, R.id.textCELL9, R.id.textCELL10, R.id.textCELL11, R.id.textCELL12, R.id.textCELL13, R.id.textCELL14, R.id.textCELL15};
+        for (Integer values : textCells) {
+            TextView tc = (TextView) findViewById(values);
+            tc.setBackgroundResource(R.color.colorCell);
+            tc.setTextColor(Color.parseColor("#696969"));
+        }
+    }
+
 
 }
