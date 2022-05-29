@@ -235,6 +235,20 @@
                         android:layout_height="wrap_content"
                         android:gravity="end"
                         android:text="Status: " />
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="Scan: " />
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="Threshold: " />
                 </LinearLayout>
 
                 <LinearLayout
@@ -247,7 +261,19 @@
                     <TextView
                         android:id="@+id/textSTATUS"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="..." />
+
+                    <TextView
+                        android:id="@+id/textSCAN"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="..." />
+
+                    <TextView
+                        android:id="@+id/textTHRESHOLD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="..." />
                 </LinearLayout>
 

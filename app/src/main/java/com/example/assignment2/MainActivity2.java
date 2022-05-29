@@ -30,7 +30,7 @@ public class MainActivity2 extends AppCompatActivity {
     public static Context context;
     Timer timer;
     ProgressBar progressBar;
-    TextView textCell1, textCell2, textCell3, textCell4, textCell5, textCell6, textCell7, textCell8, textCell9, textCell10, textCell11, textCell12, textCell13, textCell14, textCell15, textStatus;
+    TextView textCell1, textCell2, textCell3, textCell4, textCell5, textCell6, textCell7, textCell8, textCell9, textCell10, textCell11, textCell12, textCell13, textCell14, textCell15, textStatus, textScan, textThreshold;
     Button buttonStart, buttonStop2, buttonTrain2, buttonLocalize;
     Boolean suc;
     Integer count, location, t, threshold2, numMac, numCells;
@@ -70,6 +70,8 @@ public class MainActivity2 extends AppCompatActivity {
         textCell14 = (TextView) findViewById(R.id.textCELL14);
         textCell15 = (TextView) findViewById(R.id.textCELL15);
         textStatus = (TextView) findViewById(R.id.textSTATUS);
+        textScan = (TextView) findViewById(R.id.textSCAN);
+        textThreshold = (TextView) findViewById(R.id.textTHRESHOLD);
 
         // Create progress bar
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -95,9 +97,13 @@ public class MainActivity2 extends AppCompatActivity {
                         WifiManager.EXTRA_RESULTS_UPDATED, false);
                 if (success) {
                     suc = true;
+                    textScan.setTextColor(Color.GREEN);
+                    textScan.setText("new");
                     System.out.println("Scan successful");
                 } else {
                     suc = false;
+                    textScan.setTextColor(Color.RED);
+                    textScan.setText("old");
                     System.out.println("Old scan results");
                 }
             }
@@ -161,6 +167,7 @@ public class MainActivity2 extends AppCompatActivity {
                         }
 
                         while (max_prob <= threshold1 && t <= threshold2 ) {
+
                             wifiManager.startScan();
                             List<ScanResult> scanResults = wifiManager.getScanResults();
                             count = 0;
@@ -194,6 +201,7 @@ public class MainActivity2 extends AppCompatActivity {
                                 }
                             }
                             t++;
+                            textThreshold.setText(String.valueOf(max_prob));
                         }
                         if (t == (threshold2 + 1) && location != 15) {
                             textStatus.setText("waiting...");
@@ -329,6 +337,11 @@ public class MainActivity2 extends AppCompatActivity {
             tc.setBackgroundResource(R.color.colorCell);
             tc.setTextColor(Color.parseColor("#696969"));
         }
+
+        textStatus.setText("...");
+        textScan.setText("...");
+        textScan.setTextColor(Color.parseColor("#696969"));
+        textThreshold.setText("...");
     }
 
 
