@@ -27,14 +27,16 @@ import java.util.TimerTask;
 public class MainActivity2 extends AppCompatActivity {
 
     private WifiManager wifiManager;
+    public static Context context;
     Timer timer;
     ProgressBar progressBar;
     TextView textCell1, textCell2, textCell3, textCell4, textCell5, textCell6, textCell7, textCell8, textCell9, textCell10, textCell11, textCell12, textCell13, textCell14, textCell15, textStatus;
     Button buttonStart, buttonStop2, buttonTrain2, buttonLocalize;
     Boolean suc;
-    Integer count, location, t, threshold2, macAddresses, numCells;
+    Integer count, location, t, threshold2, numMac, numCells;
+    Double threshold1;
     AssetManager assetManager;
-    String[] files;
+    String[] macAddresses;
 
 
     @Override
@@ -44,6 +46,11 @@ public class MainActivity2 extends AppCompatActivity {
 
         // Integers
         count = 0;
+        numMac = 343;
+        numCells = 15;
+        threshold1 = 0.95;
+        threshold2 = 5;
+
         // Booleans
 
         // Create text views
@@ -78,9 +85,9 @@ public class MainActivity2 extends AppCompatActivity {
 
         // Asset manager
         assetManager = getAssets();
-        fileNames();
+        getMacAddresses();
 
-
+        // Checking whether you got new scan results
         BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
@@ -101,6 +108,7 @@ public class MainActivity2 extends AppCompatActivity {
         getApplicationContext().registerReceiver(wifiScanReceiver, intentFilter);
 
 
+        // Stop de process
         buttonStop2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,6 +117,7 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
+        // Go to training activity
         buttonTrain2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,6 +126,7 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
+        // Localize me only for one iteration then stop
         buttonLocalize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,47 +149,46 @@ public class MainActivity2 extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        macAddresses = 343;
-                        numCells = 15;
-                        String[] ap = apload(macAddresses, getApplicationContext());
-                        float[] freq;
-                        freq = new float[numCells];
-                        for (int l = 0; l < numCells; l++) {
-                            freq[l] = (float) 1 / numCells;
-                        }
-                        float max_freq = 0;
+                        String[] mac = readMacFile(numMac, getApplicationContext());
+                        float[] prob;
+                        prob = new float[numCells];
+                        float max_prob = 0;
                         location = 0;
                         t = 0;
-                        double threshold1 = 0.95;
-                        threshold2 = 5;
-                        while (max_freq <= threshold1 && t <= threshold2 ) {
+
+                        for (int l = 0; l < numCells; l++) {
+                            prob[l] = (float) 1 / numCells;
+                        }
+
+                        while (max_prob <= threshold1 && t <= threshold2 ) {
                             wifiManager.startScan();
-                            List<ScanResult> scanResult = wifiManager.getScanResults();
+                            List<ScanResult> scanResults = wifiManager.getScanResults();
                             count = 0;
-                            for (int i = 0; i < scanResult.size(); i++) {
+
+                            for (ScanResult scanResult : scanResults) {
                                 int j = 0;
-                                for (String value : files) {
-                                    if (scanResult.get(i).BSSID.equals(ap[j])) {
+                                for (String macAddress : macAddresses) {
+                                    if (scanResult.BSSID.equals(mac[j])) {
                                         count += 1;
-                                        String file = "pmf/" + value;
-                                        float[][] ap_temp = fileload(numCells, file, getApplicationContext());
-                                        int level = Math.abs(scanResult.get(i).level);
+                                        String file = "pmf/" + macAddress;
+                                        float[][] mac_temp = readPMFFiles(numCells, file, getApplicationContext());
+                                        int level = Math.abs(scanResult.level);
                                         float sum_freq = 0;
+
                                         for (int k = 0; k < numCells; k++) {
-                                            freq[k] = freq[k] * ap_temp[k][level];
-                                            sum_freq += freq[k];
+                                            prob[k] = prob[k] * mac_temp[k][level];
+                                            sum_freq += prob[k];
                                         }
+
                                         for (int g = 0; g < numCells; g++) {
-                                            freq[g] /= sum_freq;
-                                            if (freq[g] > max_freq) {
-                                                max_freq = freq[g];
+                                            prob[g] /= sum_freq;
+                                            if (prob[g] > max_prob) {
+                                                max_prob = prob[g];
                                                 location = g + 1;
                                             }
-                                            System.out.println(freq[g]);
-                                            System.out.println(max_freq);
                                         }
                                     } else {
-                                        textStatus.setText("No match mac address" + scanResult.get(i).BSSID);
+                                        textStatus.setText("No match mac address" + scanResult.BSSID);
                                     }
                                     j++;
                                 }
@@ -191,8 +200,8 @@ public class MainActivity2 extends AppCompatActivity {
                             //textStatus.setText(String.valueOf(max_freq));
                         }
                         else {
-                            changeColors();
-                            textStatus.setText("cell" + location);
+                            setColors();
+                            textStatus.setText("successful recognition");
                             stopIteration();
                         }
                     }
@@ -203,33 +212,31 @@ public class MainActivity2 extends AppCompatActivity {
     }
 
 
-
-    public static Context mCtx;
-    public static String[] apload(int numTypes, Context context) {
-        mCtx = context;
-        String[] apTable = new String[numTypes];
+    public static String[] readMacFile(int numTypes, Context context) {
+        MainActivity2.context = context;
+        String[] macTable = new String[numTypes];
         try{
-            InputStreamReader fileReader = new InputStreamReader(mCtx.getAssets().open("mac_addresses.txt"));
+            InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open("mac_addresses.txt"));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = null;
             int i=0;
             while((line = bufferedReader.readLine())!=null){
-                apTable[i] = line;
+                macTable[i] = line;
                 i++;
             }
             bufferedReader.close();
         }catch(IOException ex){
             Log.w("error",ex.toString());
         }
-        return apTable;
+        return macTable;
     }
 
-    public static float[][] fileload(int cellNum, String fileName, Context context){
-        mCtx = context;
+    public static float[][] readPMFFiles(int cellNum, String fileName, Context context){
+        MainActivity2.context = context;
         int rssSize = 256;
         float[][] rssTable = new float[cellNum][rssSize];
         try{
-            InputStreamReader fileReader = new InputStreamReader(mCtx.getAssets().open(fileName));
+            InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open(fileName));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = null;
             int cellIndex = 0;
@@ -256,15 +263,15 @@ public class MainActivity2 extends AppCompatActivity {
         }
     }
 
-    public void fileNames() {
+    public void getMacAddresses() {
         try {
-            files = assetManager.list("pmf");
+            macAddresses = assetManager.list("pmf");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void changeColors() {
+    public void setColors() {
         switch (location) {
             case 1:
                 textCell1.setBackgroundResource(R.color.colorAccent);
