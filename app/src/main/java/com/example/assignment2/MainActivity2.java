@@ -119,7 +119,7 @@ public class MainActivity2 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 stopIteration();
-                textStatus.setText("stop");
+                textStatus.setText("stopped");
             }
         });
 
@@ -268,6 +268,7 @@ public class MainActivity2 extends AppCompatActivity {
             timer.cancel();
             timer = null;
             progressBar.setVisibility(View.INVISIBLE);
+            initializeColors();
         }
     }
 
