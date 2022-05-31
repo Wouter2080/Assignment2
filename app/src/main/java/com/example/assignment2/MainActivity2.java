@@ -183,7 +183,7 @@ public class MainActivity2 extends AppCompatActivity {
         MainActivity2.context = context;
         String[] macTable = new String[numTypes];
         try{
-            InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open("mac_addresses.txt"));
+            InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open("mac_addresses2.txt"));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = null;
             int i=0;
@@ -328,7 +328,13 @@ public class MainActivity2 extends AppCompatActivity {
 
             for (ScanResult scanResult : scanResults) {
                 int j = 0;
+                if (max_prob > 0.95) {
+                    break;
+                }
                 for (String macAddress : macAddresses) {
+                    if (max_prob > 0.95) {
+                        break;
+                    }
                     if (scanResult.BSSID.equals(mac[j])) {
                         count += 1;
                         String file = "pmf/" + macAddress;
@@ -351,11 +357,12 @@ public class MainActivity2 extends AppCompatActivity {
                     } else {
                         textStatus.setText("No match mac address" + scanResult.BSSID);
                     }
+                    System.out.println(max_prob);
                     j++;
                 }
             }
-            t++;
             textThreshold.setText(String.valueOf(max_prob));
+            t++;
         }
         if (t == (threshold2 + 1) && location != 15) {
             textStatus.setText("waiting...");
@@ -363,7 +370,7 @@ public class MainActivity2 extends AppCompatActivity {
         }
         else {
             setColors();
-            textStatus.setText("successful recognition");
+            textStatus.setText("successful");
             stopIteration();
         }
     }
