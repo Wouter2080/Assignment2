@@ -248,7 +248,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="end"
-                        android:text="Threshold: " />
+                        android:text="Trshld: " />
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="Time: " />
                 </LinearLayout>
 
                 <LinearLayout
@@ -272,6 +279,12 @@
 
                     <TextView
                         android:id="@+id/textTHRESHOLD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="..." />
+
+                    <TextView
+                        android:id="@+id/textTIME"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="..." />

@@ -30,10 +30,11 @@ public class MainActivity2 extends AppCompatActivity {
     public static Context context;
     Timer timer;
     ProgressBar progressBar;
-    TextView textCell1, textCell2, textCell3, textCell4, textCell5, textCell6, textCell7, textCell8, textCell9, textCell10, textCell11, textCell12, textCell13, textCell14, textCell15, textStatus, textScan, textThreshold;
+    TextView textCell1, textCell2, textCell3, textCell4, textCell5, textCell6, textCell7, textCell8, textCell9, textCell10, textCell11, textCell12, textCell13, textCell14, textCell15, textStatus, textScan, textThreshold, textTime;
     Button buttonStart, buttonStop2, buttonTrain2, buttonLocalize;
     Boolean suc;
     Integer count, location, t, threshold2, numMac, numCells;
+    Long startTime, endTime;
     Double threshold1;
     AssetManager assetManager;
     String[] macAddresses;
@@ -52,6 +53,7 @@ public class MainActivity2 extends AppCompatActivity {
         threshold2 = 5;
 
         // Booleans
+        suc = true;
 
         // Create text views
         textCell1 = (TextView) findViewById(R.id.textCELL1);
@@ -72,6 +74,7 @@ public class MainActivity2 extends AppCompatActivity {
         textStatus = (TextView) findViewById(R.id.textSTATUS);
         textScan = (TextView) findViewById(R.id.textSCAN);
         textThreshold = (TextView) findViewById(R.id.textTHRESHOLD);
+        textTime = (TextView) findViewById(R.id.textTIME);
 
         // Create progress bar
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -97,13 +100,9 @@ public class MainActivity2 extends AppCompatActivity {
                         WifiManager.EXTRA_RESULTS_UPDATED, false);
                 if (success) {
                     suc = true;
-                    textScan.setTextColor(Color.GREEN);
-                    textScan.setText("new");
                     System.out.println("Scan successful");
                 } else {
                     suc = false;
-                    textScan.setTextColor(Color.RED);
-                    textScan.setText("old");
                     System.out.println("Old scan results");
                 }
             }
@@ -137,8 +136,17 @@ public class MainActivity2 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 initializeColors();
-                progressBar.setVisibility(View.VISIBLE);
-                localizeMe();
+                startTime = System.currentTimeMillis();
+
+                if (suc) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    textScan.setText("new");
+                    textScan.setTextColor(Color.GREEN);
+                    localizeMe();
+                } else {
+                    textScan.setText("old");
+                    textScan.setTextColor(Color.RED);
+                }
             }
         });
     }
@@ -155,62 +163,13 @@ public class MainActivity2 extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String[] mac = readMacFile(numMac, getApplicationContext());
-                        float[] prob;
-                        prob = new float[numCells];
-                        float max_prob = 0;
-                        location = 0;
-                        t = 0;
-
-                        for (int l = 0; l < numCells; l++) {
-                            prob[l] = (float) 1 / numCells;
-                        }
-
-                        while (max_prob <= threshold1 && t <= threshold2 ) {
-
-                            wifiManager.startScan();
-                            List<ScanResult> scanResults = wifiManager.getScanResults();
-                            count = 0;
-
-                            for (ScanResult scanResult : scanResults) {
-                                int j = 0;
-                                for (String macAddress : macAddresses) {
-                                    if (scanResult.BSSID.equals(mac[j])) {
-                                        count += 1;
-                                        String file = "pmf/" + macAddress;
-                                        float[][] mac_temp = readPMFFiles(numCells, file, getApplicationContext());
-                                        int level = Math.abs(scanResult.level);
-                                        float sum_freq = 0;
-
-                                        for (int k = 0; k < numCells; k++) {
-                                            prob[k] = prob[k] * mac_temp[k][level];
-                                            sum_freq += prob[k];
-                                        }
-
-                                        for (int g = 0; g < numCells; g++) {
-                                            prob[g] /= sum_freq;
-                                            if (prob[g] > max_prob) {
-                                                max_prob = prob[g];
-                                                location = g + 1;
-                                            }
-                                        }
-                                    } else {
-                                        textStatus.setText("No match mac address" + scanResult.BSSID);
-                                    }
-                                    j++;
-                                }
-                            }
-                            t++;
-                            textThreshold.setText(String.valueOf(max_prob));
-                        }
-                        if (t == (threshold2 + 1) && location != 15) {
-                            textStatus.setText("waiting...");
-                            //textStatus.setText(String.valueOf(max_freq));
-                        }
-                        else {
-                            setColors();
-                            textStatus.setText("successful recognition");
-                            stopIteration();
+                        if (suc) {
+                            textScan.setText("new");
+                            textScan.setTextColor(Color.GREEN);
+                            scan();
+                        } else {
+                            textScan.setText("old");
+                            textScan.setTextColor(Color.RED);
                         }
                     }
                 });
@@ -270,6 +229,8 @@ public class MainActivity2 extends AppCompatActivity {
             progressBar.setVisibility(View.INVISIBLE);
             initializeColors();
         }
+        endTime = System.currentTimeMillis();
+        textTime.setText((endTime-startTime)+"ms");
     }
 
     public void getMacAddresses() {
@@ -343,7 +304,68 @@ public class MainActivity2 extends AppCompatActivity {
         textScan.setText("...");
         textScan.setTextColor(Color.parseColor("#696969"));
         textThreshold.setText("...");
+        textTime.setText("...");
     }
 
+
+    public void scan() {
+        String[] mac = readMacFile(numMac, getApplicationContext());
+        float[] prob;
+        prob = new float[numCells];
+        float max_prob = 0;
+        location = 0;
+        t = 0;
+
+        for (int l = 0; l < numCells; l++) {
+            prob[l] = (float) 1 / numCells;
+        }
+
+        while (max_prob <= threshold1 && t <= threshold2 ) {
+
+            wifiManager.startScan();
+            List<ScanResult> scanResults = wifiManager.getScanResults();
+            count = 0;
+
+            for (ScanResult scanResult : scanResults) {
+                int j = 0;
+                for (String macAddress : macAddresses) {
+                    if (scanResult.BSSID.equals(mac[j])) {
+                        count += 1;
+                        String file = "pmf/" + macAddress;
+                        float[][] mac_temp = readPMFFiles(numCells, file, getApplicationContext());
+                        int level = Math.abs(scanResult.level);
+                        float sum_freq = 0;
+
+                        for (int k = 0; k < numCells; k++) {
+                            prob[k] = prob[k] * mac_temp[k][level];
+                            sum_freq += prob[k];
+                        }
+
+                        for (int g = 0; g < numCells; g++) {
+                            prob[g] /= sum_freq;
+                            if (prob[g] > max_prob) {
+                                max_prob = prob[g];
+                                location = g + 1;
+                            }
+                        }
+                    } else {
+                        textStatus.setText("No match mac address" + scanResult.BSSID);
+                    }
+                    j++;
+                }
+            }
+            t++;
+            textThreshold.setText(String.valueOf(max_prob));
+        }
+        if (t == (threshold2 + 1) && location != 15) {
+            textStatus.setText("waiting...");
+            //textStatus.setText(String.valueOf(max_freq));
+        }
+        else {
+            setColors();
+            textStatus.setText("successful recognition");
+            stopIteration();
+        }
+    }
 
 }
