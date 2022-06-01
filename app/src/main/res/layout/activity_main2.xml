@@ -29,13 +29,14 @@
             android:textSize="20sp" />
 
         <LinearLayout
+            android:id="@+id/linearBORDER"
             android:layout_width="match_parent"
             android:layout_height="225dp"
-            android:orientation="vertical"
-            android:background="@drawable/border"
             android:layout_marginLeft="80dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="80dp"
-            android:layout_marginTop="10dp">
+            android:background="@drawable/border"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,8 +54,8 @@
                         android:id="@+id/textCELL3"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:layout_marginRight="1dp"
+                        android:layout_weight="1"
                         android:background="#1E3F51B5"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C3" />
@@ -63,9 +64,9 @@
                         android:id="@+id/textCELL2"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_marginRight="1dp"
                         android:layout_marginTop="1dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_weight="1"
                         android:background="#1E3F51B5"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C2" />
@@ -83,8 +84,8 @@
                         android:id="@+id/textCELL4"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:background="#1E3F51B5"
                         android:layout_marginRight="1dp"
+                        android:background="#1E3F51B5"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C4" />
                 </LinearLayout>
@@ -93,15 +94,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal|center_vertical">
+                    android:gravity="center_horizontal|center_vertical"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textCELL5"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:background="#1E3F51B5"
                         android:layout_marginRight="1dp"
+                        android:background="#1E3F51B5"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C5" />
                 </LinearLayout>
@@ -110,15 +111,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal|center_vertical">
+                    android:gravity="center_horizontal|center_vertical"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textCELL6"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:background="#1E3F51B5"
                         android:layout_marginRight="1dp"
+                        android:background="#1E3F51B5"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C6" />
                 </LinearLayout>
@@ -127,8 +128,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal|center_vertical">
+                    android:gravity="center_horizontal|center_vertical"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textView11"
@@ -141,10 +142,10 @@
                         android:id="@+id/textCELL7"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:layout_weight="0"
-                        android:background="#1E3F51B5"
                         android:layout_marginRight="1dp"
                         android:layout_marginBottom="1dp"
+                        android:layout_weight="0"
+                        android:background="#1E3F51B5"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C7" />
 
@@ -152,9 +153,9 @@
                         android:id="@+id/textCELL8"
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
+                        android:layout_marginRight="1dp"
                         android:layout_weight="0.9"
                         android:background="#1E3F51B5"
-                        android:layout_marginRight="1dp"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C8" />
                 </LinearLayout>
@@ -179,10 +180,10 @@
                         android:id="@+id/textCELL10"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="#1E3F51B5"
                         android:layout_marginTop="1dp"
                         android:layout_marginBottom="1dp"
+                        android:layout_weight="1"
+                        android:background="#1E3F51B5"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C10" />
 
@@ -200,8 +201,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal|center_vertical">
+                    android:gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/textView12"
@@ -215,8 +216,8 @@
                         android:id="@+id/textCELL1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:layout_marginTop="1dp"
+                        android:layout_weight="1"
                         android:background="#1E3F51B5"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C1" />
@@ -226,8 +227,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textView2"
@@ -262,8 +263,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textSTATUS"
@@ -294,16 +295,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal|center_vertical">
+                    android:gravity="center_horizontal|center_vertical"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textCELL13"
                         android:layout_width="65dp"
                         android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
                         android:layout_weight="1"
                         android:background="#1E3F51B5"
-                        android:layout_marginBottom="1dp"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C13 (1f)" />
 
@@ -311,9 +312,9 @@
                         android:id="@+id/textCELL14"
                         android:layout_width="65dp"
                         android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
                         android:layout_weight="1"
                         android:background="#1E3F51B5"
-                        android:layout_marginBottom="1dp"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C14 (2f)" />
 
@@ -331,8 +332,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textView21"
@@ -356,16 +357,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal|center_vertical">
+                    android:gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/textCELL11"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginLeft="1dp"
                         android:layout_weight="1"
                         android:background="#1E3F51B5"
-                        android:layout_marginLeft="1dp"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="C11" />
 

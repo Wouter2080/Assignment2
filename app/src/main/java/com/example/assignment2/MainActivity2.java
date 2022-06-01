@@ -9,12 +9,15 @@ import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
@@ -31,6 +34,7 @@ public class MainActivity2 extends AppCompatActivity {
     Timer timer;
     ProgressBar progressBar;
     TextView textCell1, textCell2, textCell3, textCell4, textCell5, textCell6, textCell7, textCell8, textCell9, textCell10, textCell11, textCell12, textCell13, textCell14, textCell15, textStatus, textScan, textThreshold, textTime;
+    LinearLayout linearBorder;
     Button buttonStart, buttonStop2, buttonTrain2, buttonLocalize;
     Boolean suc;
     Integer count, location, t, threshold2, numMac, numCells;
@@ -52,6 +56,7 @@ public class MainActivity2 extends AppCompatActivity {
         numCells = 15;
         threshold1 = 0.90;
         threshold2 = 5;
+        startTime = 0L;
 
         // Booleans
         suc = true;
@@ -79,6 +84,9 @@ public class MainActivity2 extends AppCompatActivity {
         textScan = (TextView) findViewById(R.id.textSCAN);
         textThreshold = (TextView) findViewById(R.id.textTHRESHOLD);
         textTime = (TextView) findViewById(R.id.textTIME);
+
+        // Create Linear Layout
+        linearBorder = (LinearLayout) findViewById(R.id.linearBORDER);
 
         // Create progress bar
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -123,6 +131,7 @@ public class MainActivity2 extends AppCompatActivity {
             public void onClick(View v) {
                 stopIteration();
                 textStatus.setText("stopped");
+                borderChange(true);
             }
         });
 
@@ -338,10 +347,12 @@ public class MainActivity2 extends AppCompatActivity {
         } else if (System.currentTimeMillis() >= (startTime+25000)) {
             textStatus.setText("unsuccessful");
             stopIteration();
+            borderChange(false);
         } else {
             textStatus.setText("successful");
             setColors(location);
             stopIteration();
+            // borderChange(true);
         }
     }
 
@@ -385,6 +396,25 @@ public class MainActivity2 extends AppCompatActivity {
             System.out.println("error");
         }
         return rssTable;
+    }
+
+    public void borderChange(Boolean success) {
+        if (success) {
+            linearBorder.setBackgroundResource(R.drawable.border2);
+        } else {
+            linearBorder.setBackgroundResource(R.drawable.border3);
+        }
+
+        new CountDownTimer(1000, 10) {
+            @Override
+            public void onTick(long arg0) {
+                // Do nothing
+            }
+            @Override
+            public void onFinish() {
+                linearBorder.setBackgroundResource(R.drawable.border);
+            }
+        }.start();
     }
 
 }

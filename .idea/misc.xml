@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/woute/AndroidStudioProjects/Assignment2/app/src/main/res/drawable-v24/border2.xml" value="0.2195" />
+        <entry key="..\:/Users/woute/AndroidStudioProjects/Assignment2/app/src/main/res/drawable-v24/border3.xml" value="0.1445" />
         <entry key="..\:/Users/woute/AndroidStudioProjects/Assignment2/app/src/main/res/drawable/border.xml" value="0.164" />
         <entry key="..\:/Users/woute/AndroidStudioProjects/Assignment2/app/src/main/res/drawable/button.xml" value="0.175" />
         <entry key="..\:/Users/woute/AndroidStudioProjects/Assignment2/app/src/main/res/layout/activity_main.xml" value="0.2" />
