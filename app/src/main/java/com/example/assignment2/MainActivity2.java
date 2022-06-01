@@ -30,6 +30,7 @@ import java.util.TimerTask;
 public class MainActivity2 extends AppCompatActivity {
 
     private WifiManager wifiManager;
+    private AssetManager assetManager;
     public static Context context;
     Timer timer;
     ProgressBar progressBar;
@@ -40,7 +41,6 @@ public class MainActivity2 extends AppCompatActivity {
     Integer count, location, t, threshold2, numMac, numCells;
     Long startTime, endTime;
     Double threshold1;
-    AssetManager assetManager;
     String[] macAddresses, mac;
 
 
@@ -102,7 +102,7 @@ public class MainActivity2 extends AppCompatActivity {
 
         // Asset manager
         assetManager = getAssets();
-        getMacAddresses();
+        getMacAddresses(); // Load the mac addresses
 
         // Checking whether you got new scan results
         BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
@@ -331,8 +331,6 @@ public class MainActivity2 extends AppCompatActivity {
                                 location = g + 1;
                             }
                         }
-                    } else {
-//                        textStatus.setText("No match mac address" + scanResult.BSSID);
                     }
                     j++;
                 }
