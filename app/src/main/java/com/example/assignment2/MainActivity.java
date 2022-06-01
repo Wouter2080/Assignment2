@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
 
         // Integers
         limit = 0;
-        rounds = 100;
+        rounds = 50;
 
         // Booleans
         start = false;

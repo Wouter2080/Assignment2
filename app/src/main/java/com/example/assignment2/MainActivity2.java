@@ -37,7 +37,7 @@ public class MainActivity2 extends AppCompatActivity {
     Long startTime, endTime;
     Double threshold1;
     AssetManager assetManager;
-    String[] macAddresses;
+    String[] macAddresses, mac;
 
 
     @Override
@@ -47,13 +47,17 @@ public class MainActivity2 extends AppCompatActivity {
 
         // Integers
         count = 0;
-        numMac = 343;
+        //TODO Update this after changing mac file
+        numMac = 74;
         numCells = 15;
-        threshold1 = 0.95;
+        threshold1 = 0.90;
         threshold2 = 5;
 
         // Booleans
         suc = true;
+
+        // Strings
+        mac = readMacFile(numMac, getApplicationContext());
 
         // Create text views
         textCell1 = (TextView) findViewById(R.id.textCELL1);
@@ -178,12 +182,174 @@ public class MainActivity2 extends AppCompatActivity {
                                   //period − This is the time in milliseconds between successive task executions.
     }
 
+    public void stopIteration() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+        endTime = System.currentTimeMillis();
+        textTime.setText((endTime-startTime)+"ms");
+        startTime = System.currentTimeMillis();
+    }
+
+    public void getMacAddresses() {
+        try {
+            macAddresses = assetManager.list("pmf");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setColors(Integer location) {
+        switch (location) {
+            case 1:
+                textCell1.setBackgroundResource(R.color.colorAccent);
+                textCell1.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 2:
+                textCell2.setBackgroundResource(R.color.colorAccent);
+                textCell2.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 3:
+                textCell3.setBackgroundResource(R.color.colorAccent);
+                textCell3.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 4:
+                textCell4.setBackgroundResource(R.color.colorAccent);
+                textCell4.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 5:
+                textCell5.setBackgroundResource(R.color.colorAccent);
+                textCell5.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 6:
+                textCell6.setBackgroundResource(R.color.colorAccent);
+                textCell6.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 7:
+                textCell7.setBackgroundResource(R.color.colorAccent);
+                textCell7.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 8:
+                textCell8.setBackgroundResource(R.color.colorAccent);
+                textCell8.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 9:
+                textCell9.setBackgroundResource(R.color.colorAccent);
+                textCell9.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 10:
+                textCell10.setBackgroundResource(R.color.colorAccent);
+                textCell10.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 11:
+                textCell11.setBackgroundResource(R.color.colorAccent);
+                textCell11.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 12:
+                textCell12.setBackgroundResource(R.color.colorAccent);
+                textCell12.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 13:
+                textCell13.setBackgroundResource(R.color.colorAccent);
+                textCell13.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 14:
+                textCell14.setBackgroundResource(R.color.colorAccent);
+                textCell14.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+            case 15:
+                textCell15.setBackgroundResource(R.color.colorAccent);
+                textCell15.setTextColor(Color.parseColor("#FFFFFF"));
+                break;
+        }
+    }
+
+
+    public void initializeColors() {
+        int[] textCells = {R.id.textCELL1, R.id.textCELL2, R.id.textCELL3, R.id.textCELL4, R.id.textCELL5, R.id.textCELL6, R.id.textCELL7, R.id.textCELL8, R.id.textCELL9, R.id.textCELL10, R.id.textCELL11, R.id.textCELL12, R.id.textCELL13, R.id.textCELL14, R.id.textCELL15};
+        for (Integer values : textCells) {
+            TextView tc = (TextView) findViewById(values);
+            tc.setBackgroundResource(R.color.colorCell);
+            tc.setTextColor(Color.parseColor("#696969"));
+        }
+
+        textStatus.setText("...");
+        textScan.setText("...");
+        textScan.setTextColor(Color.parseColor("#696969"));
+        textThreshold.setText("...");
+        textTime.setText("...");
+    }
+
+
+    public void scan() {
+        float[] prob;
+        prob = new float[numCells];
+        float max_prob = 0;
+        location = 0;
+        t = 0;
+
+        for (int l = 0; l < numCells; l++) {
+            prob[l] = (float) 1 / numCells;
+        }
+
+        while (max_prob <= threshold1 && t <= threshold2) {
+
+            wifiManager.startScan();
+            List<ScanResult> scanResults = wifiManager.getScanResults();
+            count = 0;
+
+            for (ScanResult scanResult : scanResults) {
+                int j = 0;
+                for (String macAddress : macAddresses) {
+                    if (scanResult.BSSID.equals(mac[j])) {
+                        count += 1;
+                        String file = "pmf/" + macAddress;
+                        float[][] mac_temp = readPMFFiles(numCells, file, getApplicationContext());
+                        int level = Math.abs(scanResult.level);
+                        float sum_prob = 0;
+
+                        for (int k = 0; k < numCells; k++) {
+                            prob[k] = prob[k] * mac_temp[k][level];
+                            sum_prob += prob[k];
+                        }
+
+                        for (int g = 0; g < numCells; g++) {
+                            prob[g] /= sum_prob;
+                            if (prob[g] > max_prob) {
+                                max_prob = prob[g];
+                                location = g + 1;
+                            }
+                        }
+                    } else {
+//                        textStatus.setText("No match mac address" + scanResult.BSSID);
+                    }
+                    j++;
+                }
+            }
+            t++;
+        }
+        textThreshold.setText(String.valueOf(max_prob));
+        System.out.println("Done with while loop");
+
+        if (t == (threshold2 + 1) && location != 15) {
+            textStatus.setText("waiting...");
+        } else if (System.currentTimeMillis() >= (startTime+25000)) {
+            textStatus.setText("unsuccessful");
+            stopIteration();
+        } else {
+            textStatus.setText("successful");
+            setColors(location);
+            stopIteration();
+        }
+    }
 
     public static String[] readMacFile(int numTypes, Context context) {
         MainActivity2.context = context;
         String[] macTable = new String[numTypes];
         try{
-            InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open("mac_addresses2.txt"));
+            InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open("mac_addresses3.txt"));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = null;
             int i=0;
@@ -219,160 +385,6 @@ public class MainActivity2 extends AppCompatActivity {
             System.out.println("error");
         }
         return rssTable;
-    }
-
-
-    public void stopIteration() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-            progressBar.setVisibility(View.INVISIBLE);
-            initializeColors();
-        }
-        endTime = System.currentTimeMillis();
-        textTime.setText((endTime-startTime)+"ms");
-    }
-
-    public void getMacAddresses() {
-        try {
-            macAddresses = assetManager.list("pmf");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void setColors() {
-        switch (location) {
-            case 1:
-                textCell1.setBackgroundResource(R.color.colorAccent);
-                textCell1.setTextColor(Color.parseColor("#FFFFFF"));
-            case 2:
-                textCell2.setBackgroundResource(R.color.colorAccent);
-                textCell2.setTextColor(Color.parseColor("#FFFFFF"));
-            case 3:
-                textCell3.setBackgroundResource(R.color.colorAccent);
-                textCell3.setTextColor(Color.parseColor("#FFFFFF"));
-            case 4:
-                textCell4.setBackgroundResource(R.color.colorAccent);
-                textCell4.setTextColor(Color.parseColor("#FFFFFF"));
-            case 5:
-                textCell5.setBackgroundResource(R.color.colorAccent);
-                textCell5.setTextColor(Color.parseColor("#FFFFFF"));
-            case 6:
-                textCell6.setBackgroundResource(R.color.colorAccent);
-                textCell6.setTextColor(Color.parseColor("#FFFFFF"));
-            case 7:
-                textCell7.setBackgroundResource(R.color.colorAccent);
-                textCell7.setTextColor(Color.parseColor("#FFFFFF"));
-            case 8:
-                textCell8.setBackgroundResource(R.color.colorAccent);
-                textCell8.setTextColor(Color.parseColor("#FFFFFF"));
-            case 9:
-                textCell9.setBackgroundResource(R.color.colorAccent);
-                textCell9.setTextColor(Color.parseColor("#FFFFFF"));
-            case 10:
-                textCell10.setBackgroundResource(R.color.colorAccent);
-                textCell10.setTextColor(Color.parseColor("#FFFFFF"));
-            case 11:
-                textCell11.setBackgroundResource(R.color.colorAccent);
-                textCell11.setTextColor(Color.parseColor("#FFFFFF"));
-            case 12:
-                textCell12.setBackgroundResource(R.color.colorAccent);
-                textCell12.setTextColor(Color.parseColor("#FFFFFF"));
-            case 13:
-                textCell13.setBackgroundResource(R.color.colorAccent);
-                textCell13.setTextColor(Color.parseColor("#FFFFFF"));
-            case 14:
-                textCell14.setBackgroundResource(R.color.colorAccent);
-                textCell14.setTextColor(Color.parseColor("#FFFFFF"));
-            case 15:
-                textCell15.setBackgroundResource(R.color.colorAccent);
-                textCell15.setTextColor(Color.parseColor("#FFFFFF"));
-        }
-    }
-
-
-    public void initializeColors() {
-        int[] textCells = {R.id.textCELL1, R.id.textCELL2, R.id.textCELL3, R.id.textCELL4, R.id.textCELL5, R.id.textCELL6, R.id.textCELL7, R.id.textCELL8, R.id.textCELL9, R.id.textCELL10, R.id.textCELL11, R.id.textCELL12, R.id.textCELL13, R.id.textCELL14, R.id.textCELL15};
-        for (Integer values : textCells) {
-            TextView tc = (TextView) findViewById(values);
-            tc.setBackgroundResource(R.color.colorCell);
-            tc.setTextColor(Color.parseColor("#696969"));
-        }
-
-        textStatus.setText("...");
-        textScan.setText("...");
-        textScan.setTextColor(Color.parseColor("#696969"));
-        textThreshold.setText("...");
-        textTime.setText("...");
-    }
-
-
-    public void scan() {
-        String[] mac = readMacFile(numMac, getApplicationContext());
-        float[] prob;
-        prob = new float[numCells];
-        float max_prob = 0;
-        location = 0;
-        t = 0;
-
-        for (int l = 0; l < numCells; l++) {
-            prob[l] = (float) 1 / numCells;
-        }
-
-        while (max_prob <= threshold1 && t <= threshold2 ) {
-
-            wifiManager.startScan();
-            List<ScanResult> scanResults = wifiManager.getScanResults();
-            count = 0;
-
-            for (ScanResult scanResult : scanResults) {
-                int j = 0;
-                if (max_prob > 0.95) {
-                    break;
-                }
-                for (String macAddress : macAddresses) {
-                    if (max_prob > 0.95) {
-                        break;
-                    }
-                    if (scanResult.BSSID.equals(mac[j])) {
-                        count += 1;
-                        String file = "pmf/" + macAddress;
-                        float[][] mac_temp = readPMFFiles(numCells, file, getApplicationContext());
-                        int level = Math.abs(scanResult.level);
-                        float sum_freq = 0;
-
-                        for (int k = 0; k < numCells; k++) {
-                            prob[k] = prob[k] * mac_temp[k][level];
-                            sum_freq += prob[k];
-                        }
-
-                        for (int g = 0; g < numCells; g++) {
-                            prob[g] /= sum_freq;
-                            if (prob[g] > max_prob) {
-                                max_prob = prob[g];
-                                location = g + 1;
-                            }
-                        }
-                    } else {
-                        textStatus.setText("No match mac address" + scanResult.BSSID);
-                    }
-                    System.out.println(max_prob);
-                    j++;
-                }
-            }
-            textThreshold.setText(String.valueOf(max_prob));
-            t++;
-        }
-        if (t == (threshold2 + 1) && location != 15) {
-            textStatus.setText("waiting...");
-            //textStatus.setText(String.valueOf(max_freq));
-        }
-        else {
-            setColors();
-            textStatus.setText("successful");
-            stopIteration();
-        }
     }
 
 }
