@@ -311,6 +311,9 @@ public class MainActivity2 extends AppCompatActivity {
             for (ScanResult scanResult : scanResults) {
                 int j = 0;
                 for (String macAddress : macAddresses) {
+//                    System.out.println("j:"+j);
+//                    System.out.println(("size:"+macAddresses.length));
+//                    System.out.println(("address:"+mac[j]));
                     if (scanResult.BSSID.equals(mac[j])) {
                         count += 1;
                         String file = "pmf/" + macAddress;
@@ -342,7 +345,7 @@ public class MainActivity2 extends AppCompatActivity {
         if (t == (threshold2 + 1) && location != 15) {
             textStatus.setText("waiting...");
         } else if (System.currentTimeMillis() >= (startTime+25000)) {
-            textStatus.setText("unsuccessful");
+            textStatus.setText("timeout");
             stopIteration();
             borderChange(false);
         } else {
