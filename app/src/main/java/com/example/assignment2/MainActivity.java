@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
     ScrollView scrollTrain, scrollRssi;
     Button buttonRssi, buttonTrain, buttonSave, buttonStop, buttonTest;
 
-    Integer limit, count, rounds;
+    Integer limit, count, rounds, wait;
     Boolean start,suc;
     String data, dialogText;
 
@@ -54,6 +54,7 @@ public class MainActivity extends Activity {
         // Integers
         limit = 0;
         rounds = 50;
+        wait = 1530;
 
         // Booleans
         start = false;
@@ -221,7 +222,7 @@ public class MainActivity extends Activity {
                     });
 
                     try {
-                        Thread.sleep(3030);
+                        Thread.sleep(wait);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

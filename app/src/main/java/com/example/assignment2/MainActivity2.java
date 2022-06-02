@@ -51,7 +51,7 @@ public class MainActivity2 extends AppCompatActivity {
         // Integers
         count = 0;
         //TODO Update this after changing mac file
-        numMac = 20;
+        numMac = 87;
         numCells = 15;
         threshold1 = 0.90;
         threshold2 = 5;
