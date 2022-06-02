@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
@@ -131,7 +130,7 @@ public class MainActivity2 extends AppCompatActivity {
             public void onClick(View v) {
                 stopIteration();
                 textStatus.setText("stopped");
-                borderChange(true);
+                borderChange(false);
             }
         });
 
@@ -350,7 +349,7 @@ public class MainActivity2 extends AppCompatActivity {
             textStatus.setText("successful");
             setColors(location);
             stopIteration();
-            // borderChange(true);
+            borderChange(true);
         }
     }
 
@@ -358,7 +357,7 @@ public class MainActivity2 extends AppCompatActivity {
         MainActivity2.context = context;
         String[] macTable = new String[numTypes];
         try{
-            InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open("mac_addresses3.txt"));
+            InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open("mac_addresses.txt"));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = null;
             int i=0;
