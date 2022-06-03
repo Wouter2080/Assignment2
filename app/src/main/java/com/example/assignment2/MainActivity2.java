@@ -30,14 +30,14 @@ public class MainActivity2 extends AppCompatActivity {
 
     private WifiManager wifiManager;
     private AssetManager assetManager;
-    public static Context context;
+    private static Context context;
     Timer timer;
     ProgressBar progressBar;
     TextView textCell1, textCell2, textCell3, textCell4, textCell5, textCell6, textCell7, textCell8, textCell9, textCell10, textCell11, textCell12, textCell13, textCell14, textCell15, textStatus, textScan, textThreshold, textTime;
     LinearLayout linearBorder;
     Button buttonStart, buttonStop2, buttonTrain2, buttonLocalize;
     Boolean suc;
-    Integer count, location, t, threshold2, numMac, numCells;
+    Integer count, location, t, threshold2, numMac, numCells, wrongMacCount;
     Long startTime, endTime;
     Double threshold1;
     String[] macAddresses, mac;
@@ -53,9 +53,11 @@ public class MainActivity2 extends AppCompatActivity {
         //TODO Update this after changing mac file
         numMac = 87;
         numCells = 15;
+        //TODO change threshold to 0.9
         threshold1 = 0.90;
         threshold2 = 5;
         startTime = 0L;
+        wrongMacCount = 0;
 
         // Booleans
         suc = true;
@@ -302,6 +304,7 @@ public class MainActivity2 extends AppCompatActivity {
             prob[l] = (float) 1 / numCells;
         }
 
+        wrongMacCount = 0;
         while (max_prob <= threshold1 && t <= threshold2) {
 
             wifiManager.startScan();
@@ -311,9 +314,6 @@ public class MainActivity2 extends AppCompatActivity {
             for (ScanResult scanResult : scanResults) {
                 int j = 0;
                 for (String macAddress : macAddresses) {
-//                    System.out.println("j:"+j);
-//                    System.out.println(("size:"+macAddresses.length));
-//                    System.out.println(("address:"+mac[j]));
                     if (scanResult.BSSID.equals(mac[j])) {
                         count += 1;
                         String file = "pmf/" + macAddress;
@@ -333,6 +333,8 @@ public class MainActivity2 extends AppCompatActivity {
                                 location = g + 1;
                             }
                         }
+                    } else {
+                        wrongMacCount += 1;
                     }
                     j++;
                 }
@@ -342,8 +344,10 @@ public class MainActivity2 extends AppCompatActivity {
         textThreshold.setText(String.valueOf(max_prob));
         System.out.println("Done with while loop");
 
-        if (t == (threshold2 + 1) && location != 15) {
+        if (t == (threshold2 + 1) && location != 15 && numMac/2 > wrongMacCount) {
             textStatus.setText("waiting...");
+        } else if (numMac/2 <= wrongMacCount) {
+            textStatus.setText("no ap found");
         } else if (System.currentTimeMillis() >= (startTime+25000)) {
             textStatus.setText("timeout");
             stopIteration();
@@ -362,7 +366,7 @@ public class MainActivity2 extends AppCompatActivity {
         try{
             InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open("mac_addresses.txt"));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line = null;
+            String line;
             int i=0;
             while((line = bufferedReader.readLine())!=null){
                 macTable[i] = line;
@@ -382,7 +386,7 @@ public class MainActivity2 extends AppCompatActivity {
         try{
             InputStreamReader fileReader = new InputStreamReader(MainActivity2.context.getAssets().open(fileName));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line = null;
+            String line;
             int cellIndex = 0;
             while((line = bufferedReader.readLine())!=null){
                 String[] lineSplit = line.split(",");
