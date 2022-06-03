@@ -22,6 +22,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,10 +39,11 @@ public class MainActivity2 extends AppCompatActivity {
     LinearLayout linearBorder;
     Button buttonStart, buttonStop2, buttonTrain2, buttonLocalize;
     Boolean suc;
-    Integer count, location, t, threshold2, numMac, numCells, wrongMacCount;
+    Integer count, location, t, threshold2, threshold3, numMac, numCells, wrongMacCount;
     Long startTime, endTime;
     Double threshold1;
     String[] macAddresses, mac;
+    ArrayList<Integer> locationMemory;
 
 
     @Override
@@ -53,9 +56,9 @@ public class MainActivity2 extends AppCompatActivity {
         //TODO Update this after changing mac file
         numMac = 87;
         numCells = 15;
-        //TODO change threshold to 0.9
-        threshold1 = 0.90;
-        threshold2 = 5;
+        threshold1 = 0.90;  // Max prob threshold
+        threshold2 = 5;     // Max new scan iteration count
+        threshold3 = 50;    // Max amount highest prob for specific cell
         startTime = 0L;
         wrongMacCount = 0;
 
@@ -64,6 +67,9 @@ public class MainActivity2 extends AppCompatActivity {
 
         // Strings
         mac = readMacFile(numMac, getApplicationContext());
+
+        // Lists
+        locationMemory = new ArrayList<>(Collections.nCopies(numCells, 0));
 
         // Create text views
         textCell1 = (TextView) findViewById(R.id.textCELL1);
@@ -201,6 +207,7 @@ public class MainActivity2 extends AppCompatActivity {
         endTime = System.currentTimeMillis();
         textTime.setText((endTime-startTime)+"ms");
         startTime = System.currentTimeMillis();
+        locationMemory = new ArrayList<>(Collections.nCopies(numCells, 0));
     }
 
     public void getMacAddresses() {
@@ -313,7 +320,7 @@ public class MainActivity2 extends AppCompatActivity {
 
             for (ScanResult scanResult : scanResults) {
                 int j = 0;
-                for (String macAddress : macAddresses) {
+                for (String macAddress : macAddresses) { //TODO save max prop at location in this loop
                     if (scanResult.BSSID.equals(mac[j])) {
                         count += 1;
                         String file = "pmf/" + macAddress;
@@ -333,6 +340,13 @@ public class MainActivity2 extends AppCompatActivity {
                                 location = g + 1;
                             }
                         }
+
+                        // Keep track of highest prob cells
+                        int index = location-1;
+                        int value = locationMemory.get(index); // TODO List with location count highest prob
+                        value += 1;
+                        locationMemory.set(index, value);
+
                     } else {
                         wrongMacCount += 1;
                     }
@@ -346,8 +360,18 @@ public class MainActivity2 extends AppCompatActivity {
 
         if (t == (threshold2 + 1) && location != 15 && numMac/2 > wrongMacCount) {
             textStatus.setText("waiting...");
+            for (int i = 0; i<numCells; i++) {
+                if (locationMemory.get(i) > threshold3) {
+                    textStatus.setText("successful");
+                    setColors(i+1);
+                    stopIteration();
+                    borderChange(true);
+                }
+            }
         } else if (numMac/2 <= wrongMacCount) {
             textStatus.setText("no ap found");
+            stopIteration();
+            borderChange(false);
         } else if (System.currentTimeMillis() >= (startTime+25000)) {
             textStatus.setText("timeout");
             stopIteration();
